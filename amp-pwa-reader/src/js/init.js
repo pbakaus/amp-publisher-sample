@@ -16,7 +16,7 @@
 
 // Create app singleton as global
 window.shadowReader = new ShadowReader({
-  backend: TheGuardian
+  backend: Reddit
 });
 
 // Initialize fully when DOM is ready

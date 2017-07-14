@@ -1,0 +1,41 @@
+$name: reddit;
+
+.sr-backend-#{$name} {
+
+  header {
+
+    background: #f5f5f5;
+    box-shadow: 0 0 5px 0 rgba(0,0,0,.2);
+
+    div.#{$name} {
+      display: block;
+      background-image: url(https://www.redditstatic.com/sprite-reddit.6Om8v6KMv28.png);
+      background-position: 0px -1323px;
+      background-repeat: no-repeat;
+      height: 40px;
+      width: 120px;
+      zoom: 0.7;
+    }
+  }
+
+  .sr-hamburger {
+    background-color: #a1a3a5;
+    box-shadow: none;
+  }
+
+  .sr-navigation {
+    padding-left: 0;
+    padding-top: 0;
+    background: #f5f5f5;
+
+    li {
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+
+      a {
+        color: #f5f5f5;
+        background: #797979;
+      }
+    }
+  }
+
+}

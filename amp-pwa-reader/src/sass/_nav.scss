@@ -18,25 +18,26 @@
     padding-top: 20px;
 
     li {
-        border-top: 1px solid #005689;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.22);
 
         a {
             display: block;
-            height: 34px;
-            padding-top: 2px;
+            padding: 1em;
             color: white;
-            font-size: 22px;
+            font-size: 1.2em;
             text-decoration: none;
+            transition: color 0.2s, background 0.2s;
 
             &:hover {
                 color: #4BC6DF;
+                background: linear-gradient(135deg, rgba(64, 117, 199, 0.1) 0%,rgba(13, 71, 161, 0.37) 100%);
             }
         }
 
         &.active {
             a {
-                border-top: 1px solid #4BC6DF;
                 color: #4BC6DF;
+                background: linear-gradient(135deg, rgba(64, 117, 199, 0.1) 0%,rgba(13, 71, 161, 0.37) 100%);
             }
         }
 

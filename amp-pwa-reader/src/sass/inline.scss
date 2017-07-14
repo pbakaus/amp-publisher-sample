@@ -1,6 +1,12 @@
 @import '_config.scss';
 @import '_helpers.scss';
 
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    text-rendering: geometricPrecision; /* slow but nice...might decide to remove again */
+    margin: 0;
+}
+
 .amp-shadow {
     touch-action: pan-y;
 }
