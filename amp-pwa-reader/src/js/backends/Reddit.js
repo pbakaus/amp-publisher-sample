@@ -63,6 +63,8 @@ class Reddit extends Backend {
 
   sanitize(doc) {
 
+    doc.querySelector('nav.TopNav').remove();
+
     // remove content head
     /*this._title = ;
     this._description = ;
