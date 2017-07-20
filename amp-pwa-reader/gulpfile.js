@@ -16,7 +16,6 @@ const browserSync = require('browser-sync').create();
 const historyApiFallback = require('connect-history-api-fallback');
 const fs = require('fs');
 const del = require('del');
-const workboxBuild = require('workbox-build');
 
 
 const paths = {
@@ -30,16 +29,9 @@ const paths = {
   },
   scripts: {
     src: [
-      'src/js/History.js',
-      'src/js/Backend.js',
-      'src/js/backends/*.js',
-      'src/js/Evented.js',
-      'src/js/DragObserver.js',
       'src/js/ShadowReader.js',
-      'src/js/init.js',
-      'src/js/FeedReader.js',
       'src/js/Nav.js',
-      'src/js/Card.js'
+      'src/js/init.js'
     ],
     dest: '.tmp/'
   },
@@ -95,16 +87,6 @@ function clean() {
   ]);
 }
 
-function injectManifest() {
-  return workboxBuild.injectManifest({
-    globDirectory: './dist/',
-    globPatterns: [ 'img/*.{svg,png,jpg}', 'index.html', 'inline.css' ],
-    globIgnores: ['admin.html'],
-    swSrc: './src/sw.js',
-    swDest: './dist/sw.js'
-  });
-}
-
 function watch() {
 
   browserSync.init({
@@ -116,13 +98,13 @@ function watch() {
   });
 
   gulp.watch(paths.scripts.src, gulp.series(scripts, inline));
-  gulp.watch(paths.styles.src, gulp.series(styles, inline, injectManifest));
+  gulp.watch(paths.styles.src, gulp.series(styles, inline));
   gulp.watch(paths.page.src, dist);
   gulp.watch(paths.images.src, copy);
 
 }
 
-var dist = gulp.series(gulp.parallel(copy, styles, scripts), inline, injectManifest);
+var dist = gulp.series(gulp.parallel(copy, styles, scripts), inline);
 var dev = gulp.series(dist, watch);
 
 gulp.task('dev', dev);

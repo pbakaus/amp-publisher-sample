@@ -5,7 +5,6 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
     text-rendering: geometricPrecision; /* slow but nice...might decide to remove again */
     margin: 0;
-    touch-action: pan-y;
     -webkit-tap-highlight-color: transparent;
 }
 
@@ -34,58 +33,13 @@ main {
   line-height: 1.4;
 }
 
-.note-desktop {
-    display: none;
-}
-
-/* Desktop/Tablet */
-@media (min-width: $mobile-breakpoint) {
-
-    .sr-category,
-    main {
-        transform: translateX(0);
-        margin-left: 200px;
-    }
-
-    .sr-category {
-        padding-left: 1em;
-    }
-
-    .sr-category h1 {
-        font-size: 2em;
-    }
-
-    .sr-wrapper {
-        max-width: none;
-    }
-
-    main {
-        padding: 0 1em;
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-        grid-gap: 1em;
-    }
-
-    .note-desktop {
-        display: block;
-        margin-left: calc(216px);
-        margin-right: 16px;
-        margin-bottom: 16px;
-        border: 2px solid #fffd4f;
-        background: #fffe99;
-        padding: 1em;
-        font-size: 18pt;
-        line-height: 1.4;
-    }
-
-}
-
 @import '_performance.scss';
 @import '_card.scss';
 @import '_header.scss';
 @import '_nav.scss';
 
-@import 'backends/*.scss';
+/* Guardian specific styles */
+@import '_guardian.scss';
 
 
 

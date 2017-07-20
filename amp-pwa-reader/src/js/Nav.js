@@ -17,30 +17,28 @@
 class Nav {
 
   constructor() {
+
+    this.categories = {
+      'us': 'top news',
+      'us-news--us-politics': 'politics',
+      'world': 'world',
+      'commentisfree': 'opinion',
+      'us--technology': 'tech',
+      'us--culture': 'arts',
+      'us--lifeandstyle': 'lifestyle',
+      'fashion': 'fashion',
+      'us--business': 'business',
+      'us--travel': 'travel'
+    };
+
     this.category = null;
     this.cards = [];
-    this.feedReader = new FeedReader;
     this.element = document.querySelector('.sr-navigation');
 
     this.bind();
 
-    // initialize slide logic
-    this.initMenuSlide();
-
     // Create the nav items from categories
     this.create();
-
-    // The history module resolves the initial state from either the history API
-    // or the loaded URL, in case there's no history entry.
-    var state = shadowReader.history.state;
-
-    if (state.articleUrl) {
-      // TODO
-    } else {
-      // If there's no article to be loaded, just load the default or
-      // selected category.
-      this.switchCategory(state.category);
-    }
 
   }
 
@@ -52,44 +50,17 @@ class Nav {
 
     let fragment = document.createDocumentFragment();
 
-    for (let category in shadowReader.backend.categories) {
+    for (let category in this.categories) {
       let item = document.createElement('li');
       let link = document.createElement('a');
       link.href = '#';
       link.dataset.tag = category;
-      link.textContent = shadowReader.backend.categories[category];
+      link.textContent = this.categories[category];
       item.appendChild(link);
       fragment.appendChild(item);
     }
 
     this.element.appendChild(fragment);
-
-  }
-
-  initMenuSlide() {
-
-    this.dragObserver = new DragObserver(document, { axis: 'x' });
-    var wasOpen = false;
-    var delta = 0;
-
-    this.dragObserver.bind('start', () => {
-      wasOpen = document.body.classList.contains('sr-nav-shown');
-      this.element.classList.add('sr-disable-transitions');
-    });
-
-    this.dragObserver.bind('move', (position) => {
-      delta = position.x;
-      let x = Math.max(-200, Math.min(position.x, 200) - (wasOpen ? 0 : 200));
-      this.element.style.transform = 'translateX(' + x + 'px)';
-    });
-
-    this.dragObserver.bind('stop', () => {
-      this.element.classList.remove('sr-disable-transitions');
-      this.element.style.transform = '';
-      if (Math.abs(delta) > 70) {
-        this[wasOpen ? 'hide' : 'show']();
-      }
-    });
 
   }
 
@@ -117,7 +88,7 @@ class Nav {
   switchCategory(category) {
 
     // set the new title
-    this.categoryTitle = shadowReader.backend.getCategoryTitle(category);
+    this.categoryTitle = this.categories[category];
 
     // mark menu element as active
     this.setNavElement(category);
@@ -125,33 +96,8 @@ class Nav {
     // set the category
     this.category = category;
 
-    // set current cards to loading
-    for (let card of this.cards) {
-      card.elem.classList.add('sr-loading');
-    }
-
     // hide menu
     this.hide();
-
-    // fetch new nav entries via RSS via YQL
-    return this.feedReader.fetch(category).then(entries => {
-
-      // empty items container (lazy..)
-      shadowReader.itemsElement.innerHTML = '';
-      this.cards = [];
-
-      // render new entries
-      for (let entry of entries) {
-        this.cards.push(new Card(entry, /*headless*/false));
-      }
-
-      // reset scroll position
-      document.scrollingElement.scrollTop = 0;
-
-      // restore focus
-      shadowReader.itemsElement.firstElementChild.children[1].focus();
-
-    });
 
   }
 
@@ -189,28 +135,7 @@ class Nav {
     return this[document.body.classList.contains('sr-nav-shown') ? 'hide' : 'show']();
   }
 
-  resize() {
-    for (let card of this.cards) {
-      card.refresh();
-    }
-  }
-
   bind() {
-
-    /* history navigation */
-    window.addEventListener('popstate', event => {
-
-      var state = {
-        category: event.state && event.state.category ? event.state.category : this.category,
-        articleUrl: event.state ? event.state.articleUrl : null
-      };
-
-      // switch to the correct category if not already on it
-      if (this.category !== state.category) {
-        this.switchCategory(state.category);
-      }
-
-    }, false);
 
     /* clicks on the hamburger menu icon */
     document.querySelector('.sr-hamburger').addEventListener(shadowReader.clickEvent, () => {
@@ -227,20 +152,8 @@ class Nav {
       // switch to the clicked category
       this.switchCategory(event.target.dataset.tag, event.target.parentNode);
 
-      // set entry in the browser history, navigate URL bar
-      shadowReader.history.navigate(null);
-
       event.preventDefault();
     }), false;
-
-    /* resize event, mostly relevant for Desktop resolutions */
-    let debounce;
-    window.addEventListener('resize', () => {
-      clearTimeout(debounce);
-      debounce = setTimeout(() => {
-        this.resize();
-      }, 100);
-    });
 
   }
 
