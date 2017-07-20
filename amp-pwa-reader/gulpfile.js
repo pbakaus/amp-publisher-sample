@@ -39,8 +39,7 @@ const paths = {
       'src/js/init.js',
       'src/js/FeedReader.js',
       'src/js/Nav.js',
-      'src/js/Card.js',
-      'src/js/Article.js'
+      'src/js/Card.js'
     ],
     dest: '.tmp/'
   },

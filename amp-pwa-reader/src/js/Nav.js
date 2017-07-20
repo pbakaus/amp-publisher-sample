@@ -35,9 +35,7 @@ class Nav {
     var state = shadowReader.history.state;
 
     if (state.articleUrl) {
-      // Open the correct article, even before switching to the category, if we
-      // have one.
-      this.startWithArticle(state);
+      // TODO
     } else {
       // If there's no article to be loaded, just load the default or
       // selected category.
@@ -95,79 +93,6 @@ class Nav {
 
   }
 
-  startWithArticle(state) {
-
-    let article = Article.getArticleByURL(state.articleUrl) || new Article(state.articleUrl);
-
-    // if we have a card, things are easy: simply pretend we click on the card!
-    if (article.card) {
-      return article.card.activate();
-    }
-
-    // otherwise things are a little more complicated, as we have no card to click on..
-    article.load()
-      .then(() => article.render())
-      .then(() => {
-
-        // passing true here ensures that the state is overwritten again..
-        article.show(true).then(() => {
-          // hide the skeleton UI
-          // INVESTIGATE: For some reason needs a delay..
-          setTimeout(() => {
-            document.body.classList.remove('sr-show-article-skeleton');
-          }, 100);
-
-        });
-
-        // the return button in this state is a special case, and can't animate (yet)
-        this.hamburgerReturnAction = () => {
-          shadowReader.enableCardTabbing();
-          article.card && article.card.animateBack();
-          article.hide();
-          shadowReader.history.navigate(null);
-        };
-
-        // switch to the correct category only after the article is loaded for max perf
-        this.switchCategory(state.category).then(() => {
-          // now that the cards have been lazily loaded, attempt to reconnect the
-          // already loaded article with the proper card
-          for (let card of this.cards) {
-            if (card.article.url === article.url) {
-              card.ready(() => {
-
-                // link our custom initialized article with our card
-                article.card = card;
-                card.article = article;
-
-                // if the card is somewhere outside the scroll position, we need
-                // to set it to a place where the card is actually visible.
-                article._mainScrollY = Math.max(0, card.elem.offsetTop - innerHeight / 3);
-
-                // apply the 'zoomed-in' state on the card behind the scenes, so
-                // we can animate back when the user clicks back
-                // TODO: stupid to call this method animate..
-                article.card.animate(false, -article._mainScrollY);
-
-              });
-            }
-          }
-
-          // set main view to inert so you can't tab into it
-          shadowReader.disableCardTabbing();
-
-        });
-
-      });
-
-  }
-
-  setOpenArticle(article, replace) {
-    this.openArticle = article;
-
-    // Set new history entry
-    shadowReader.history.navigate(article.url, replace, article.ampDoc.title);
-  }
-
   getNavElement(category) {
     return document.querySelector('.sr-navigation a[data-tag="' + category + '"]');
   }
@@ -216,9 +141,8 @@ class Nav {
       this.cards = [];
 
       // render new entries
-      let prerender = 3;
       for (let entry of entries) {
-        this.cards.push(new Card(entry, /*headless*/false, /*prerender*/--prerender >= 0));
+        this.cards.push(new Card(entry, /*headless*/false));
       }
 
       // reset scroll position
@@ -284,33 +208,11 @@ class Nav {
         this.switchCategory(state.category);
       }
 
-      // if we go to a state where no article was open, and we have a
-      // currently-opened one, close it again
-      if (this.openArticle && !state.articleUrl && this.hamburgerReturnAction) {
-        this.hamburgerReturnAction();
-        this.hamburgerReturnAction = null;
-        this.openArticle = null;
-      }
-
-      // If there's an article in the state object, we need to open it
-      if (state.articleUrl) {
-        this.startWithArticle(state);
-      }
-
     }, false);
 
     /* clicks on the hamburger menu icon */
-    document.querySelector('.sr-hamburger').addEventListener(shadowReader.clickEvent, event => {
-
-      // default menu toggle (only executes when not in article view)
-      !document.documentElement.classList.contains('sr-article-shown') && this.toggle();
-
-      // use as temporary back button
-      if (this.hamburgerReturnAction) {
-        this.hamburgerReturnAction(event);
-        this.hamburgerReturnAction = null;
-      }
-
+    document.querySelector('.sr-hamburger').addEventListener(shadowReader.clickEvent, () => {
+      this.toggle();
     }), false;
 
     /* clicks on menu links */

@@ -64,36 +64,6 @@ class TheGuardian extends Backend {
     return this.ampEndpoint + path;
   }
 
-  sanitize(doc) {
-
-    // remove stuff we don't need in embed mode
-    let header = doc.getElementsByTagName('header');
-    if (header.length)
-      header[0].remove();
-
-    // remove sidebar
-    let sidebar = doc.getElementsByTagName('amp-sidebar');
-    if (sidebar.length)
-      sidebar[0].remove();
-
-    // remove content head
-    let contentHead = doc.querySelector('header.content__head');
-    if (contentHead) {
-      this._title = contentHead.querySelector('h1.content__headline').textContent;
-      this._description = contentHead.querySelector('.content__standfirst meta').getAttribute('content');
-      contentHead.remove();
-    }
-
-    // remove the featured image of the AMP article
-    let featuredImage = doc.querySelector('.media-primary amp-img');
-    if (featuredImage) {
-      this._image = featuredImage.getAttribute('src');
-      this._imageRatio = featuredImage.getAttribute('height') / featuredImage.getAttribute('width');
-      featuredImage.remove();
-    }
-
-  }
-
 }
 
 Backend.classes['theguardian'] = TheGuardian;

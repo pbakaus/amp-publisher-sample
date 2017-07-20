@@ -76,30 +76,6 @@ class Backend {
     return articleUrl.replace(this.ampEndpoint, '');
   }
 
-  getArticleData(/*doc*/) {
-    return {
-      description: this._description,
-      title: this._title,
-      image: this._image,
-      imageRatio: this._imageRatio
-    };
-  }
-
-  extractSchemaData(doc) {
-    var schemaData = doc.querySelectorAll('script[type="application/ld+json"]');
-    for (let schema of schemaData) {
-      let parsedSchema = JSON.parse(schema.textContent);
-      if (/WebPage|NewsArticle/.test(parsedSchema['@type'])) {
-        return parsedSchema;
-      }
-    }
-    return null;
-  }
-
-  sanitize(doc) {
-    return doc;
-  }
-
 }
 
 Backend.classes = {};

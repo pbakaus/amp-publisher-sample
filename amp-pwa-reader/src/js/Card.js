@@ -16,30 +16,16 @@
 
 class Card {
 
-  constructor(data, headless, prerender) {
+  constructor(data) {
 
     this.data = data;
-    this.headless = headless;
     this.currentTransform = { scaleX: 1, scaleY: 1 };
     this.naturalDimensions = { width: 0, height: 0 };
 
     this.create();
     this.bind();
 
-    // if we're in headless mode, that means the Card is initialized purely to
-    // render out the featured image in the Shadow DOM, not for the list view,
-    // thus we don't need to fancy it up.
-    if (this.headless) {
-      this.elem.classList.add('sr-full');
-      this.innerElem.setAttribute('tabindex', -1);
-    } else {
-      this.article = new Article(this.data.link, this);
-      this.render();
-    }
-
-    if (prerender) {
-      this.article.load();
-    }
+    this.render();
 
   }
 
@@ -87,57 +73,6 @@ class Card {
 
   }
 
-  animate(dontAnimate, scrollOffset) {
-
-    let elem = this.elem;
-    elem.classList.add('sr-full');
-
-    let offsetLeft = elem.offsetLeft + elem.offsetParent.offsetLeft;
-    let offsetTop = (elem.offsetTop + elem.offsetParent.offsetTop) - shadowReader.headerElement.offsetHeight - scrollY + (scrollOffset || 0);
-    let currentWidth = this.naturalDimensions.width;
-    let currentHeight = this.naturalDimensions.height;
-    let newWidth = innerWidth;
-    let newHeight = newWidth * this.imageData.ratio;
-
-    this.currentTransform = {
-      scaleX: (newWidth / currentWidth),
-      scaleY: (newHeight / currentHeight),
-      translateX: -offsetLeft,
-      translateY: -offsetTop
-    };
-
-    // animate the card to the natural ratio of the featured image
-    this.elem.style.transform = 'translateY(' + this.currentTransform.translateY + 'px)'
-                                + 'translateX(' + this.currentTransform.translateX + 'px)'
-                                + 'scaleX(' + this.currentTransform.scaleX + ')'
-                                + 'scaleY(' + this.currentTransform.scaleY + ')';
-
-    // counter-animate all children
-    this.resizeChildren({
-      width: newWidth,
-      height: newHeight
-    }, /*animate*/!dontAnimate, true);
-
-  }
-
-  animateBack() {
-
-    this.elem.classList.remove('sr-full');
-
-    // animate to the right height
-    this.elem.style.transform = '';
-
-    this.currentTransform = {
-      scaleX: 1,
-      scaleY: 1,
-      translateY: 0
-    };
-
-    // counter-animate all children
-    this.resizeChildren(this.naturalDimensions, true, false);
-
-  }
-
   create() {
 
     var elem = document.createElement('div'),
@@ -154,32 +89,25 @@ class Card {
     img.src = this.data.image;
     img.setAttribute('role', 'presentation'); // prevents screen reader access
 
-    // if we're in headless mode, that means the Card is initialized purely to
-    // render out the featured image in the Shadow DOM, not for the list view,
-    // thus we don't need to fancy it up for animations.
-    if (!this.headless) {
+    img.style.opacity = 0;
+    img.onload = () => {
 
-      img.style.opacity = 0;
-      img.onload = () => {
-
-        this.imageData = {
-          ratio: img.offsetHeight / img.offsetWidth,
-          width: img.offsetWidth,
-          height: img.offsetHeight
-        };
-
-        this.naturalDimensions = {
-          width: this.elem.offsetWidth,
-          height: this.elem.offsetHeight
-        };
-
-        this.resizeChildren(this.naturalDimensions, false);
-        img.style.opacity = '';
-        this.setReady();
-
+      this.imageData = {
+        ratio: img.offsetHeight / img.offsetWidth,
+        width: img.offsetWidth,
+        height: img.offsetHeight
       };
 
-    }
+      this.naturalDimensions = {
+        width: this.elem.offsetWidth,
+        height: this.elem.offsetHeight
+      };
+
+      this.resizeChildren(this.naturalDimensions, false);
+      img.style.opacity = '';
+      this.setReady();
+
+    };
 
     innerElem.appendChild(h2);
     innerElem.appendChild(p);
@@ -203,47 +131,13 @@ class Card {
 
   }
 
-  hijackMenuButton() {
-    shadowReader.nav.hamburgerReturnAction = event => {
-      // Go back in history stack, but only if we don't trigger the method
-      // manually, coming from popstate
-      if(event) history.back();
-
-      this.deactivate();
-    };
-  }
-
   activate() {
-
-    // set main view to inert so you can't tab into it
-    shadowReader.disableCardTabbing();
-
-    // add loading spinner (and promote to layer)
-    this.elem.classList.add('sr-loading', 'sr-promote-layer');
-
-    this.article.load()
-      .then(() => this.article.render())
-      .then(() => {
-        // remove loading spinner
-        this.elem.classList.remove('sr-loading');
-
-        this.animate();
-        this.article.show();
-        this.hijackMenuButton();
-      })
-      .catch(error => {
-        this.elem.classList.remove('sr-loading');
-        this.elem.classList.add('sr-error');
-      });
+    // TODO
+    console.log('TODO: Activate card');
   }
 
   deactivate() {
-
-    // restore tabbing in main view
-    shadowReader.enableCardTabbing();
-
-    this.animateBack();
-    this.article.hide();
+    // TODO
   }
 
   bind() {
@@ -259,15 +153,8 @@ class Card {
       // don't trigger the default link click
       event.preventDefault();
 
-      // blur the element, as the focus style would hinder the animation
-      this.innerElem.blur();
-
-      // if we're looking at the duplicate card in the article view, a click
-      // on the card should do nothing at all
-      if (!this.elem.classList.contains('sr-full')) {
-        // activate the card
-        this.activate();
-      }
+      // activate the card
+      this.activate();
 
     });
   }

@@ -58,19 +58,6 @@
     background-position: center;
   }
 
-  &.sr-error::after {
-    display: block;
-    position: absolute;
-    content: 'Error: No AMP version to display (this is a demo – in production, you\'d know in advance)';
-    padding: 2em;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: -1px; /* fixes weird clipping bug in Chrome.. */
-    z-index: 5;
-    background-color: rgba(132, 21, 21, 0.87);
-  }
-
   &:first-child {
       min-height: 50vh;
 
@@ -144,43 +131,7 @@
 
 }
 
-.amp-shadow {
-  .sr-card {
 
-    /* need to force font-size, since inner styles might not play nice..*/
-    font-size: 16px;
-    background-color: #eee;
-
-    &:hover {
-      transform: none;
-      cursor: inherit;
-    }
-
-    &:first-child {
-        min-height: initial;
-    }
-
-    .sr-inner {
-      padding-right: 3em; /* needed to make it look the same between cloned and non-cloned */
-    }
-
-    img {
-        width: 100%;
-        height: auto;
-    }
-
-  }
-}
-
-.sr-card.sr-full {
-  transition-duration: var(--animation-speed-in);
-
-  &::before,
-  > *,
-  .sr-inner {
-    transition-duration: var(--animation-speed-in);
-  }
-}
 
 /* Desktop/Tablet */
 @media (min-width: $mobile-breakpoint) {
@@ -194,11 +145,6 @@
           .inner {
             opacity: 0;
           }
-        }
-
-        &.sr-full:hover {
-            cursor: auto;
-            transform: inherit;
         }
 
     }
