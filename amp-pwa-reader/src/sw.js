@@ -12,9 +12,6 @@ workboxSW.router.registerNavigationRoute('index.html', {
   blacklist: [/img\/.*/, /\.(js|css)/]
 });
 
-// Cache AMP libraries
-workboxSW.router.registerRoute('https://cdn.ampproject.org/(.*)', workboxSW.strategies.staleWhileRevalidate());
-
 // Cache a number of YQL queries, but only for 5 minutes
 workboxSW.router.registerRoute(
   'https://query.yahooapis.com/v1/public/(.*)',
